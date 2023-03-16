@@ -6,6 +6,9 @@ const formReducer = (state, action) => {
     case 'INPUT_CHANGE':
       let formIsValid = true;
       for (let inputId in state.inputs) {
+        if (!state.inputs[inputId]) {
+          continue;
+        }
         if (inputId === action.inputId) {
           formIsValid = formIsValid && action.isValid;
         } else {
@@ -26,8 +29,8 @@ const formReducer = (state, action) => {
     case 'SET_DATA':
       return {
         inputs: action.inputs,
-        isValid: action.isValid
-      }
+        isValid: action.isValid,
+      };
     default:
       return state;
   }
@@ -45,9 +48,9 @@ const useForm = (initialInputs, initialValidity) => {
   const inputHandler = useCallback((id, value, isValid) => {
     dispatch({
       type: 'INPUT_CHANGE',
+      inputId: id,
       value: value,
       isValid: isValid,
-      inputId: id,
     });
   }, []);
 
