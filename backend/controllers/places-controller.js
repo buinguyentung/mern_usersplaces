@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
+const fs = require('fs');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
@@ -64,7 +65,7 @@ const getPlacesByUserId = async (req, res, next) => {
     return next(new HttpError('Something went wrong. Could not find any places.', 500));
   }
 
-  if (!places || places.length === 0) {
+  if (!places) {
     return next(new HttpError('Could not find any place for the given user id', 404));
   }
 
@@ -115,7 +116,8 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image: '/images/van-mieu.jpg',
+    // image: '/images/van-mieu.jpg',
+    image: req.file.path,
     creator
   });
   // DUMMY_PLACES.push(createdPlace);
@@ -208,6 +210,9 @@ const deletePlace = async (req, res, next) => {
     return next(error);
   }
 
+  // Remove the image
+  const imagePath = place.image; 
+
   // Delete the place
   try {
     // await place.delete();
@@ -221,6 +226,10 @@ const deletePlace = async (req, res, next) => {
     console.log(err);
     return next(new HttpError('Something went wrong. Could not delete place.', 500));
   }
+
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
   
   res.status(200).json({message: "Deleted place."});
 }

@@ -70,7 +70,8 @@ const signup = async (req, res, next) => {
     name,
     email,
     password,
-    image: '/images/fantasy-goku.png',
+    // image: '/images/fantasy-goku.png',
+    image: req.file.path,
     places: [],
   });
   try {

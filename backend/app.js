@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 const placesRouter = require('./routes/places-routes');
 const usersRouter = require('./routes/users-routes');
@@ -10,6 +12,9 @@ const app = express();
 
 // Parse and convert all json data
 app.use(bodyParser.json());
+
+// Serving images statically
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 // Fix CORS error
 app.use((req, res, next) => {
@@ -30,6 +35,12 @@ app.use((req, res, next) => {
 
 // Handle response errors
 app.use((error, req, res, next) => {
+  // roll back image if validation fails
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {
+      console.log('[ERROR] File remove failed: ' + err);
+    });
+  }
   if (res.headerSent) {
     return next(error);
   }
