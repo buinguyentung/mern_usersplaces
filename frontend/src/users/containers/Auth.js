@@ -15,6 +15,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import ErrorModal from '../../shared/components/UIElement/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElement/LoadingSpinner';
 import useHttpClient from '../../shared/hooks/http-hook';
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
 import './Auth.css';
 
 // For form-wide state reducer (email, password)
@@ -68,17 +69,16 @@ const Auth = () => {
       }
     } else {
       try {
+        const formData = new FormData();
+        formData.append('email', formState.inputs.email.value);
+        formData.append('name', formState.inputs.username.value);
+        formData.append('password', formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
         const responseData = await sendRequest(
           `${process.env.REACT_APP_BACKEND_URL}/users/signup`,
           'POST',
-          {
-            'Content-Type': 'application/json',
-          },
-          JSON.stringify({
-            name: formState.inputs.username.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          })
+          {},
+          formData
         );
         auth.login(responseData.user.id);
       } catch (error) {
@@ -92,13 +92,20 @@ const Auth = () => {
     if (!isLoginMode) {
       //to login
       setFormData(
-        { ...formState.inputs, username: undefined },
+        { ...formState.inputs, username: undefined, image: undefined },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
       //to sign up
       setFormData(
-        { ...formState.inputs, username: { value: '', isValid: false } },
+        {
+          ...formState.inputs,
+          username: { value: '', isValid: false },
+          image: {
+            value: null,
+            isValid: false,
+          },
+        },
         false
       );
     }
@@ -123,6 +130,14 @@ const Auth = () => {
               validators={[VALIDATOR_REQUIRE()]}
               errorText="Please enter a valid username."
               onInput={inputHandler}
+            />
+          )}
+          {!isLoginMode && (
+            <ImageUpload
+              center
+              id="image"
+              onInput={inputHandler}
+              errorText="Please provide an image."
             />
           )}
           <Input
