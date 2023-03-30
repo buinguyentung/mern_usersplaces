@@ -63,7 +63,7 @@ const Auth = () => {
           })
         );
 
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (error) {
         console.log('[ERROR] in login: ' + error.message);
       }
@@ -80,7 +80,7 @@ const Auth = () => {
           {},
           formData
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
       } catch (error) {
         console.log('[ERROR] in signup: ' + error.message);
       }

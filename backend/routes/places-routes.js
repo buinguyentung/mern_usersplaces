@@ -2,16 +2,20 @@ const express = require('express');
 
 const { check } = require('express-validator');
 const fileUpload = require('../middleware/file-upload');
+const checkAuth = require('../middleware/check-auth');
 
 const placesController = require('../controllers/places-controller');
 
 const router = express.Router();
 
-router.get('/', placesController.getPlaces);
+// router.get('/', placesController.getPlaces);
 
 router.get('/:placeId', placesController.getPlaceById);
 
 router.get('/user/:userId', placesController.getPlacesByUserId);
+
+// Protect the routes after
+router.use(checkAuth);
 
 router.post(
   '/',

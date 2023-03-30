@@ -57,12 +57,14 @@ const NewPlace = (props) => {
       formData.append('title', formState.inputs.title.value);
       formData.append('description', formState.inputs.description.value);
       formData.append('address', formState.inputs.address.value);
-      formData.append('creator', auth.userId);
+      // formData.append('creator', auth.userId);
       formData.append('image', formState.inputs.image.value);
       await sendRequest(
         `${process.env.REACT_APP_BACKEND_URL}/places`,
         'POST',
-        {},
+        {
+          Authorization: 'Bearer ' + auth.token
+        },
         formData
       );
       // Re-direct to another page

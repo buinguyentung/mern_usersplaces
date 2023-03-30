@@ -87,6 +87,7 @@ const UpdatePlace = () => {
         'PATCH',
         {
           'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + auth.token
         },
         JSON.stringify({
           title: formState.inputs.title.value,
